@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Yagu_On</string>
+    <string name="home">홈</string>
+    <string name="cheer_room">응원방</string>
+    <string name="groups">그룹</string>
+    <string name="upload">업로드</string>
+    <string name="songs">응원가</string>
+    <string name="profile">마이</string>
+</resources>

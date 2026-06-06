@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yagu_On 응원 회차 피드 미리보기</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f7f9fc;
+      --line: #d9e1ec;
+      --text: #17202e;
+      --muted: #69778c;
+      --blue: #2d6cdf;
+      --red: #df3d3d;
+      --pink: #f3dede;
+      --avatar: #ec58f1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Malgun Gothic", sans-serif;
+    }
+
+    main {
+      min-height: 100vh;
+      padding: 22px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .app {
+      width: min(430px, 100%);
+      min-height: 820px;
+      background: #eef3f9;
+      border: 1px solid #cfd8e6;
+      box-shadow: 0 18px 40px rgba(32, 51, 84, 0.16);
+      overflow: hidden;
+    }
+
+    .top {
+      height: 74px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .back {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 50%;
+      background: #edf2f8;
+      color: var(--text);
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .title {
+      min-width: 0;
+    }
+
+    .title strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .feed {
+      height: calc(820px - 74px);
+      display: flex;
+      gap: 12px;
+      padding: 18px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .feed::-webkit-scrollbar {
+      display: none;
+    }
+
+    .inning {
+      min-width: calc(100% - 26px);
+      height: 100%;
+      padding: 0;
+      overflow-y: auto;
+      scroll-snap-align: start;
+    }
+
+    .inning-card {
+      min-height: 100%;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 8px 20px rgba(30, 48, 78, 0.08);
+    }
+
+    .inning-head {
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #edf1f6;
+    }
+
+    .eyebrow {
+      margin-bottom: 10px;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+    }
+
+    .inning-title {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.15;
+    }
+
+    .inning-copy {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .member-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .member-card {
+      position: relative;
+      min-height: 202px;
+      padding: 18px;
+      border: 1px solid #e0e7f0;
+      border-radius: 8px;
+      background: var(--surface-soft);
+      overflow: hidden;
+    }
+
+    .member-card.done {
+      background: linear-gradient(90deg, #eef4fc 0%, #f6e8e8 100%);
+    }
+
+    .member-head {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: #273245;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--avatar);
+      color: #111111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .avatar.photo {
+      background: linear-gradient(135deg, #d4d8df, #8992a1);
+      color: #ffffff;
+      font-size: 12px;
+    }
+
+    .time {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(18, 28, 44, 0.06);
+      font-size: 42px;
+      font-weight: 900;
+      pointer-events: none;
+    }
+
+    .shoot {
+      position: absolute;
+      left: 50%;
+      top: 54%;
+      transform: translate(-50%, -50%);
+      min-width: 150px;
+      padding: 11px 22px;
+      border: 1px solid #c2cad7;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.64);
+      color: #1e2a3b;
+      font-size: 19px;
+      font-weight: 900;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .caption {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      min-height: 42px;
+      padding: 11px 14px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #e0e6ef;
+      color: #39475b;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .caption.empty {
+      color: #8a96a8;
+    }
+
+    .page-hint {
+      margin: 14px auto 0;
+      width: 88px;
+      height: 5px;
+      border-radius: 999px;
+      background: #b4bfcd;
+    }
+
+  </style>
+</head>
+<body>
+  <main>
+    <section class="app" aria-label="응원 회차 가로 피드 미리보기">
+      <div class="top">
+        <button class="back" aria-label="뒤로">‹</button>
+        <div class="title">
+          <strong>응원</strong>
+        </div>
+      </div>
+
+      <div class="feed">
+        <section class="inning">
+          <article class="inning-card">
+            <div class="inning-head">
+              <div class="eyebrow">INNING</div>
+              <h1 class="inning-title">1회</h1>
+              <p class="inning-copy">구성원별 사진/영상/글귀 기록을 확인합니다.</p>
+            </div>
+
+            <div class="member-list">
+              <article class="member-card">
+                <div class="member-head">
+                  <div class="avatar">⌾</div>
+                  <span>이재혁</span>
+                </div>
+                <div class="time">19:00</div>
+                <div class="shoot">눌러서 촬영</div>
+                <div class="caption empty">글귀 추가</div>
+              </article>
+
+              <article class="member-card done">
+                <div class="member-head">
+                  <div class="avatar photo">IMG</div>
+                  <span>경민</span>
+                </div>
+                <div class="time">19:00</div>
+                <div class="caption">1회부터 분위기 좋다</div>
+              </article>
+
+              <article class="member-card">
+                <div class="member-head">
+                  <div class="avatar">⌾</div>
+                  <span>서연</span>
+                </div>
+                <div class="time">19:00</div>
+                <div class="shoot">눌러서 촬영</div>
+                <div class="caption empty">글귀 추가</div>
+              </article>
+            </div>
+          </article>
+          <div class="page-hint"></div>
+        </section>
+
+        <section class="inning">
+          <article class="inning-card">
+            <div class="inning-head">
+              <div class="eyebrow">INNING</div>
+              <h1 class="inning-title">2회</h1>
+              <p class="inning-copy">다음 회차도 같은 구성으로 가로로 넘겨 확인합니다.</p>
+            </div>
+
+            <div class="member-list">
+              <article class="member-card">
+                <div class="member-head">
+                  <div class="avatar">⌾</div>
+                  <span>이재혁</span>
+                </div>
+                <div class="time">19:18</div>
+                <div class="shoot">눌러서 촬영</div>
+                <div class="caption empty">글귀 추가</div>
+              </article>
+
+              <article class="member-card">
+                <div class="member-head">
+                  <div class="avatar photo">IMG</div>
+                  <span>경민</span>
+                </div>
+                <div class="time">19:18</div>
+                <div class="shoot">눌러서 촬영</div>
+                <div class="caption empty">글귀 추가</div>
+              </article>
+
+              <article class="member-card done">
+                <div class="member-head">
+                  <div class="avatar">⌾</div>
+                  <span>서연</span>
+                </div>
+                <div class="time">19:18</div>
+                <div class="caption">응원가 같이 부르는 중</div>
+              </article>
+            </div>
+          </article>
+          <div class="page-hint"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

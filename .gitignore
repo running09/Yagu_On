@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+.idea/
+app/build/
+outputs/npm-cache/
+outputs/npm-cache-firebase/
+*.log
+firestore-debug.log

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YAGU_ON 디렉터리 구조와 데이터 흐름</title>
+  <style>
+    :root {
+      --bg: #fff7f5;
+      --panel: #ffffff;
+      --ink: #1f2630;
+      --muted: #637083;
+      --line: #ecd9d3;
+      --red: #ef5350;
+      --blue: #082247;
+      --green: #2d6a4f;
+      --gold: #f2c94c;
+      --soft: #fff0ed;
+      --shadow: 0 12px 28px rgba(31, 38, 48, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Segoe UI", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+      line-height: 1.62;
+    }
+
+    a {
+      color: var(--blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--red);
+      text-decoration: underline;
+    }
+
+    header {
+      padding: 48px 28px 30px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wrap {
+      width: min(1180px, calc(100vw - 40px));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0 10px;
+      color: var(--blue);
+      font-size: 38px;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      color: var(--blue);
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .lead {
+      max-width: 860px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    main {
+      padding: 28px 0 56px;
+    }
+
+    section {
+      margin-top: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .flow-card {
+      position: relative;
+      min-height: 130px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .flow-card::after {
+      content: ">";
+      position: absolute;
+      right: -11px;
+      top: 50%;
+      width: 20px;
+      height: 20px;
+      transform: translateY(-50%);
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--red);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 900;
+      z-index: 2;
+    }
+
+    .flow-card:last-child::after {
+      display: none;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: var(--blue);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tag.red {
+      background: var(--red);
+    }
+
+    .tag.green {
+      background: var(--green);
+    }
+
+    .tag.gold {
+      background: #7a5a00;
+    }
+
+    .dir-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .dir-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 18px;
+    }
+
+    .path {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      background: #f5f0ee;
+      color: var(--blue);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .why {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .step-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .step-list li {
+      margin: 8px 0;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 840px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--blue);
+      background: #fff3f0;
+      font-size: 14px;
+    }
+
+    td {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .callout {
+      border-left: 4px solid var(--red);
+      background: #fff2ef;
+      padding: 16px 18px;
+      border-radius: 8px;
+      color: var(--muted);
+    }
+
+    .mini-flow {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 12px;
+      align-items: start;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .mini-flow b {
+      color: var(--blue);
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #f5f0ee;
+      color: var(--blue);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.92em;
+    }
+
+    footer {
+      padding: 24px 0 42px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 920px) {
+      h1 {
+        font-size: 30px;
+      }
+
+      .flow,
+      .dir-grid,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-card::after {
+        content: "v";
+        right: 50%;
+        top: auto;
+        bottom: -11px;
+        transform: translateX(50%);
+      }
+
+      .mini-flow {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="eyebrow">YAGU_ON / 응원ON 구조 설명</div>
+      <h1>디렉터리별 역할과 데이터 흐름</h1>
+      <p class="lead">
+        이 프로젝트는 Android Java/XML 앱을 빠르게 Firebase MVP로 만들기 위해
+        화면, 도메인 규칙, 데이터 계약, Firebase 구현체를 나눠 둔 구조다.
+        핵심 데이터는 화면에서 바로 Firebase를 만지지 않고 Repository 계층을 지나가도록 구성되어 있다.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel">
+      <h2>전체 흐름 한 장 요약</h2>
+      <div class="flow">
+        <div class="flow-card">
+          <span class="tag red">User</span>
+          <h3>사용자 입력</h3>
+          <p>로그인, 팀 선택, 하단 탭 이동, 그룹 생성, 회차 기록 저장 같은 행동이 시작점이다.</p>
+        </div>
+        <div class="flow-card">
+          <span class="tag">UI</span>
+          <h3>Activity / Fragment</h3>
+          <p><code>MainActivity</code>가 공통 프레임을 들고, 각 Fragment가 화면별 입력과 렌더링을 맡는다.</p>
+        </div>
+        <div class="flow-card">
+          <span class="tag green">Rule</span>
+          <h3>Domain</h3>
+          <p>폼 검증, 권한 판단, 사용자용 오류 문구, 5초 영상 제한 같은 앱 규칙을 처리한다.</p>
+        </div>
+        <div class="flow-card">
+          <span class="tag gold">Data</span>
+          <h3>Repository</h3>
+          <p>화면은 인터페이스만 호출한다. 실제 Firebase 접근은 구현체가 맡는다.</p>
+        </div>
+        <div class="flow-card">
+          <span class="tag red">Firebase</span>
+          <h3>Auth / Firestore / Storage</h3>
+          <p>인증, 사용자 프로필, 그룹, 회차 기록, 미디어 파일이 원격 DB와 Storage에 저장된다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>디렉터리별로 왜 이렇게 나눴는가</h2>
+      <div class="dir-grid">
+        <div class="dir-card">
+          <span class="path">app/</span>
+          <h3>Android 앱 모듈</h3>
+          <p>실제 APK로 빌드되는 모듈이다. Gradle 설정, AndroidManifest, Java 코드, XML 리소스가 모두 이 안에 들어간다.</p>
+          <p class="why">왜 분리했나: 루트는 프로젝트 관리용으로 두고, Android 런타임에 필요한 것은 <code>app</code> 안에 모아 빌드 단위를 명확하게 하기 위해서다.</p>
+        </div>
+
+        <div class="dir-card">
+          <span class="path">app/src/main/java/com/example/myapplication/</span>
+          <h3>화면 진입점과 Fragment</h3>
+          <p><code>AuthGateActivity</code>, <code>LoginActivity</code>, <code>MainActivity</code>, <code>HomeFragment</code>, <code>GroupsFragment</code> 같은 화면 코드가 있다.</p>
+          <p class="why">왜 분리했나: 로그인, 팀 선택, 메인 탭, 그룹 화면처럼 사용자가 보는 흐름을 화면 단위로 빠르게 찾고 수정하기 위해서다.</p>
+        </div>
+
+        <div class="dir-card">
+          <span class="path">app/src/main/java/.../data/</span>
+          <h3>데이터 계약 계층</h3>
+          <p><code>AuthRepository</code>, <code>UserRepository</code>, <code>GroupRepository</code>, <code>InningRepository</code> 같은 인터페이스와 callback 타입이 있다.</p>
+          <p class="why">왜 분리했나: 화면이 Firebase SDK를 직접 알지 않게 하려는 경계다. 화면은 "그룹을 만들어줘"라고 요청하고, 어디에 저장하는지는 구현체가 결정한다.</p>
+        </div>
+
+        <div class="dir-card">
+          <span class="path">app/src/main/java/.../data/firebase/</span>
+          <h3>Firebase 구현체</h3>
+          <p><code>FirebaseGroupRepository</code>, <code>FirebaseInningRepository</code>, <code>FirebaseUserRepository</code>가 실제 Auth, Firestore, Storage 호출을 한다.</p>
+          <p class="why">왜 분리했나: Firebase 경로, batch write, upload 같은 외부 서비스 의존성을 한곳에 묶어 화면 코드가 복잡해지는 것을 막기 위해서다.</p>
+        </div>
+
+        <div class="dir-card">
+          <span class="path">app/src/main/java/.../domain/</span>
+          <h3>앱 규칙과 판단</h3>
+          <p><code>GroupPermissionPolicy</code>, <code>GroupRoleResolver</code>, <code>VideoUploadPolicy</code>, <code>GroupFormValidator</code> 등이 있다.</p>
+          <p class="why">왜 분리했나: owner/admin/member 권한, 입력 검증, 영상 길이 제한 같은 규칙은 화면도 DB도 아니다. 별도 계층에 두면 같은 규칙을 여러 화면에서 재사용할 수 있다.</p>
+        </div>
+
+        <div class="dir-card">
+          <span class="path">app/src/main/java/.../model/</span>
+          <h3>데이터 모양</h3>
+          <p><code>UserProfile</code>, <code>Group</code>, <code>GroupMember</code>, <code>Inning</code>, <code>InningRecord</code>, <code>Post</code> 같은 값 객체가 있다.</p>
+          <p class="why">왜 분리했나: Firestore 문서와 앱 내부 데이터의 모양을 맞춰 두면 저장, 조회, 화면 표시가 덜 헷갈린다.</p>
+        </div>
+
+        <div class="dir-card">
+          <span class="path">app/src/main/java/.../util/</span>
+          <h3>공통 도구</h3>
+          <p><code>Ui</code>는 카드/버튼/입력창 생성 helper이고, <code>TeamCatalog</code>는 구단 목록을 제공한다.</p>
+          <p class="why">왜 분리했나: 반복되는 UI 생성과 팀 데이터를 화면마다 복붙하지 않기 위해서다. 다만 UI 크기와 radius도 여기서 많이 정해진다.</p>
+        </div>
+
+        <div class="dir-card">
+          <span class="path">app/src/main/res/</span>
+          <h3>Android 리소스</h3>
+          <p><code>layout</code>, <code>menu</code>, <code>drawable</code>, <code>values</code>, <code>xml</code>이 있다. XML 화면, 하단 탭, 색상, 문자열, FileProvider 경로를 관리한다.</p>
+          <p class="why">왜 분리했나: Android는 코드와 리소스를 분리해 화면 구조, 색상, 문자열, 아이콘을 독립적으로 관리한다.</p>
+        </div>
+
+        <div class="dir-card">
+          <span class="path">docs/</span>
+          <h3>기획과 결정 기록</h3>
+          <p>MVP 계획, Firebase 설정 기록, UI 비교 HTML, 오류 문구 정책 같은 프로젝트 지식이 들어간다.</p>
+          <p class="why">왜 분리했나: 코드만 보면 왜 이렇게 만들었는지 알기 어렵다. 과거 결정과 현재 상태를 문서로 남겨 다음 수정 때 기준점을 제공한다.</p>
+        </div>
+
+        <div class="dir-card">
+          <span class="path">outputs/</span>
+          <h3>검증 산출물</h3>
+          <p>실기기 캡처, XML dump, Firebase CLI cache 같은 작업 결과물이 있다.</p>
+          <p class="why">왜 분리했나: 앱 코드와 검증 결과를 분리해, 화면 변경 전후와 Firebase 검증 증거를 나중에 다시 볼 수 있게 하기 위해서다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>주요 데이터 흐름</h2>
+      <div class="split">
+        <div>
+          <h3>1. 로그인 후 앱 진입</h3>
+          <ol class="step-list">
+            <li><code>AuthGateActivity</code>가 현재 로그인 상태를 확인한다.</li>
+            <li><code>UserRepository.getCurrentUser()</code>로 Firestore의 사용자 프로필을 읽는다.</li>
+            <li>선호팀이 없으면 <code>TeamSelectActivity</code>, 있으면 <code>MainActivity</code>로 이동한다.</li>
+            <li><code>MainActivity</code>는 프로필의 <code>favoriteTeamId</code>를 기준으로 홈 화면을 연다.</li>
+          </ol>
+        </div>
+        <div>
+          <h3>2. 하단 탭 화면 전환</h3>
+          <ol class="step-list">
+            <li><code>activity_main.xml</code>의 <code>BottomNavigationView</code>가 탭 클릭을 받는다.</li>
+            <li><code>MainActivity</code>가 선택된 메뉴 id를 보고 Fragment를 만든다.</li>
+            <li><code>fragment_container</code>에 <code>replace()</code>로 홈, 응원방, 그룹, 응원가, 마이 화면을 갈아끼운다.</li>
+            <li>공통 헤더와 팀 칩은 Activity에 남고, 화면 내용만 Fragment가 담당한다.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mini-flow">
+        <b>그룹 목록 조회</b>
+        <p><code>GroupsFragment.loadGroups()</code> → <code>GroupRepository.getGroupsByTeam()</code> → <code>FirebaseGroupRepository</code> → Firestore <code>groups</code> 조회 → <code>ListCallback</code>으로 돌아와 카드 렌더링.</p>
+      </div>
+
+      <div class="mini-flow">
+        <b>그룹 생성</b>
+        <p><code>GroupsFragment.createGroup()</code> → <code>GroupFormValidator</code>로 이름 검증 → <code>FirebaseGroupRepository.createGroup()</code> → Firestore batch로 <code>groups/{groupId}</code>와 <code>groups/{groupId}/members/{uid}</code> 동시 저장.</p>
+      </div>
+
+      <div class="mini-flow">
+        <b>회차 기록 저장</b>
+        <p><code>GroupsFragment.saveMyRecord()</code> → <code>InningRecordFormValidator</code> 검증 → <code>FirebaseInningRepository</code> → 미디어가 있으면 Storage 업로드 → Firestore <code>records/{userId}</code> 저장 → 상세 화면 다시 로드.</p>
+      </div>
+
+      <div class="mini-flow">
+        <b>선호팀 저장</b>
+        <p><code>TeamSelectActivity.selectTeam()</code> → <code>UserRepository.updateFavoriteTeam()</code> → Firestore <code>users/{uid}.favoriteTeamId</code> 업데이트 → <code>MainActivity</code> 진입.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>파일별 빠른 찾기표</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>찾고 싶은 것</th>
+              <th>어디를 보면 되는가</th>
+              <th>데이터 흐름상 역할</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>앱 첫 진입과 로그인 분기</td>
+              <td><a href="../app/src/main/java/com/example/myapplication/AuthGateActivity.java">AuthGateActivity.java</a></td>
+              <td>로그인 여부와 선호팀 여부를 보고 다음 Activity를 고른다.</td>
+            </tr>
+            <tr>
+              <td>하단 탭과 공통 헤더</td>
+              <td><a href="../app/src/main/java/com/example/myapplication/MainActivity.java">MainActivity.java</a>, <a href="../app/src/main/res/layout/activity_main.xml">activity_main.xml</a></td>
+              <td>프로필과 선택 팀을 들고 Fragment를 교체한다.</td>
+            </tr>
+            <tr>
+              <td>홈 화면 문구와 팀 요약</td>
+              <td><a href="../app/src/main/java/com/example/myapplication/HomeFragment.java">HomeFragment.java</a>, <a href="../app/src/main/java/com/example/myapplication/domain/HomeFeedFormatter.java">HomeFeedFormatter.java</a></td>
+              <td>선택 팀 id를 받아 순위, 최근 전적, 직전 경기 문구를 만든다.</td>
+            </tr>
+            <tr>
+              <td>그룹 목록, 생성, 상세, 회차</td>
+              <td><a href="../app/src/main/java/com/example/myapplication/GroupsFragment.java">GroupsFragment.java</a></td>
+              <td>현재는 그룹 기능 대부분이 이 파일에 모여 있다. 향후 목록/생성/상세로 분리할 대상이다.</td>
+            </tr>
+            <tr>
+              <td>Firebase 그룹 저장/조회</td>
+              <td><a href="../app/src/main/java/com/example/myapplication/data/firebase/FirebaseGroupRepository.java">FirebaseGroupRepository.java</a></td>
+              <td>Firestore <code>groups</code>와 <code>members</code> 문서를 실제로 읽고 쓴다.</td>
+            </tr>
+            <tr>
+              <td>회차 기록과 미디어 업로드</td>
+              <td><a href="../app/src/main/java/com/example/myapplication/data/firebase/FirebaseInningRepository.java">FirebaseInningRepository.java</a></td>
+              <td>Storage 업로드 후 Firestore record 문서를 저장한다.</td>
+            </tr>
+            <tr>
+              <td>권한 판단</td>
+              <td><a href="../app/src/main/java/com/example/myapplication/domain/GroupPermissionPolicy.java">GroupPermissionPolicy.java</a>, <a href="../app/src/main/java/com/example/myapplication/domain/GroupRoleResolver.java">GroupRoleResolver.java</a></td>
+              <td>owner/admin/member가 무엇을 할 수 있는지 UI와 Repository 앞단에서 판단한다.</td>
+            </tr>
+            <tr>
+              <td>공통 카드/버튼 크기</td>
+              <td><a href="../app/src/main/java/com/example/myapplication/util/Ui.java">Ui.java</a></td>
+              <td>프로그래밍 방식으로 만든 UI의 radius, padding, 버튼 높이, 카드 스타일을 결정한다.</td>
+            </tr>
+            <tr>
+              <td>Firebase 보안 강제</td>
+              <td><a href="../firestore.rules">firestore.rules</a>, <a href="../storage.rules">storage.rules</a></td>
+              <td>앱을 우회한 요청도 서버 쪽에서 최종 차단한다.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>현재 구조에서 알아둬야 할 점</h2>
+      <div class="callout">
+        <p>
+          이 구조의 장점은 Firebase 접근을 Repository에 모아 화면 코드가 어느 정도 분리되어 있다는 점이다.
+          반대로 <code>GroupsFragment</code>는 목록, 생성 폼, 상세, 초대, 회차, 업로드까지 너무 많은 책임을 들고 있다.
+          그래서 그룹 생성과 그룹 상세를 별도 Activity 또는 별도 Fragment로 분리하면 이후 수정이 훨씬 편해진다.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    정리 기준: 2026-06-06. 관련 문서: <a href="../index.md">프로젝트 문서 색인</a>, <a href="firebase-settings-applied-2026-06-06.md">Firebase 설정 적용 기록</a>
+  </footer>
+</body>
+</html>

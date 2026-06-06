@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YAGU_ON 미리보기</title>
+  <style>
+    :root {
+      --red: #c1121f;
+      --blue: #003049;
+      --green: #2d6a4f;
+      --gold: #f6ae2d;
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --muted: #eef2f6;
+      --border: #dee5ec;
+      --text: #17202a;
+      --sub: #5c6672;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #dfe6ee;
+      color: var(--text);
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .phone {
+      width: min(430px, 100%);
+      height: min(880px, calc(100vh - 48px));
+      min-height: 680px;
+      background: var(--bg);
+      border: 10px solid #111820;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    header {
+      padding: 18px 16px 10px;
+      background: var(--bg);
+    }
+
+    .appbar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 21px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--sub);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--red);
+    }
+
+    h1 {
+      margin: 8px 0 4px;
+      font-size: 25px;
+      line-height: 1.24;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .team-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 14px 0 4px;
+      scrollbar-width: none;
+    }
+
+    .team-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 13px;
+      white-space: nowrap;
+      background: var(--muted);
+      color: var(--sub);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    main {
+      overflow-y: auto;
+      padding: 4px 16px 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 8px 0;
+    }
+
+    .label {
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 5px 0 4px;
+      font-size: 21px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 18px 0 6px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .card-title {
+      margin: 4px 0 3px;
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .body-text,
+    .caption {
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .caption {
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      border: 0;
+      border-radius: 8px;
+      min-height: 44px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn.red {
+      background: var(--red);
+    }
+
+    .btn.blue {
+      background: var(--blue);
+    }
+
+    .btn.green {
+      background: var(--green);
+    }
+
+    .outline {
+      flex: initial;
+      min-height: 38px;
+      padding: 0 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .media {
+      height: 150px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: var(--blue);
+    }
+
+    .media.red {
+      background: var(--red);
+    }
+
+    .media.green {
+      background: var(--green);
+    }
+
+    .field {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      color: var(--text);
+      font: inherit;
+      resize: none;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    nav {
+      height: 68px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .nav-item {
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      cursor: pointer;
+    }
+
+    .nav-item span:first-child {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+    }
+
+    .nav-item.active span:first-child {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 0;
+        background: var(--bg);
+      }
+
+      .phone {
+        width: 100%;
+        height: 100vh;
+        min-height: 100vh;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header>
+      <div class="appbar">
+        <span>YAGU_ON</span>
+        <span class="status"><span class="dot"></span>LIVE</span>
+      </div>
+      <h1 id="screen-title">오늘의 응원 홈</h1>
+      <p class="subtitle" id="screen-subtitle">선호 팀의 응원과 콘텐츠를 한 곳에서 확인하세요.</p>
+      <div class="team-strip" id="team-strip"></div>
+    </header>
+
+    <main id="content"></main>
+
+    <nav id="bottom-nav">
+      <button class="nav-item active" data-tab="home"><span>⌂</span><span>홈</span></button>
+      <button class="nav-item" data-tab="cheer"><span>말</span><span>응원방</span></button>
+      <button class="nav-item" data-tab="upload"><span>＋</span><span>업로드</span></button>
+      <button class="nav-item" data-tab="songs"><span>♪</span><span>응원가</span></button>
+      <button class="nav-item" data-tab="profile"><span>나</span><span>마이</span></button>
+    </nav>
+  </div>
+
+  <script>
+    const teams = [
+      "LG 트윈스", "두산 베어스", "키움 히어로즈", "SSG 랜더스", "KT 위즈",
+      "KIA 타이거즈", "삼성 라이온즈", "롯데 자이언츠", "NC 다이노스", "한화 이글스"
+    ];
+
+    const state = {
+      tab: "home",
+      team: "LG 트윈스",
+    };
+
+    const title = document.querySelector("#screen-title");
+    const subtitle = document.querySelector("#screen-subtitle");
+    const content = document.querySelector("#content");
+    const teamStrip = document.querySelector("#team-strip");
+
+    function card(html) {
+      return `<section class="card">${html}</section>`;
+    }
+
+    function section(name) {
+      return `<h3>${name}</h3>`;
+    }
+
+    function feedCard(title, meta, media, color, body) {
+      return card(`
+        <div class="media ${color}">${media}</div>
+        <div class="card-title">${title}</div>
+        <div class="caption">${meta}</div>
+        <div class="body-text">${body}</div>
+        <div class="row">
+          <button class="outline">좋아요 34</button>
+          <button class="outline">댓글 8</button>
+        </div>
+      `);
+    }
+
+    function messageCard(text, meta) {
+      return card(`
+        <div class="card-title">${text}</div>
+        <div class="caption">${meta}</div>
+      `);
+    }
+
+    function songCard(name, desc) {
+      return card(`
+        <div class="row" style="padding-top:0">
+          <div style="flex:1">
+            <div class="card-title">${name}</div>
+            <div class="caption">${desc}</div>
+          </div>
+          <button class="outline">재생</button>
+          <button class="outline">저장</button>
+        </div>
+      `);
+    }
+
+    function renderTeamChips() {
+      teamStrip.innerHTML = teams.map(team => `
+        <button class="chip ${team === state.team ? "active" : ""}" data-team="${team}">${team}</button>
+      `).join("");
+
+      document.querySelectorAll(".chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          state.team = chip.dataset.team;
+          render();
+        });
+      });
+    }
+
+    function renderHome() {
+      title.textContent = "오늘의 응원 홈";
+      subtitle.textContent = `${state.team} 팬들이 올린 응원 콘텐츠와 경기 흐름을 확인하세요.`;
+      content.innerHTML = `
+        ${card(`
+          <div class="label">LIVE MATCH</div>
+          <h2>${state.team} vs 라이벌 팀</h2>
+          <div class="body-text">7회말 · 3 : 2 · 응원방 1,248명 접속 중</div>
+          <div class="row">
+            <button class="btn red" data-go="cheer">응원방 입장</button>
+            <button class="btn blue" data-go="upload">영상 올리기</button>
+          </div>
+        `)}
+        ${section("팬 피드")}
+        ${feedCard("잠실 1루석 응원 열기", "민지 · 방금 전", "짧은 영상", "red", "멀리 있어도 같이 부르는 느낌! 오늘 응원가 텐션 좋네요.")}
+        ${feedCard("새 유니폼 인증", "현우 · 12분 전", "사진", "green", "친구들이랑 온라인으로 모여서 경기 보면서 응원 중입니다.")}
+        ${section("경기 일정")}
+        ${card(`
+          <div class="card-title">다음 경기</div>
+          <div class="caption">내일 18:30 · 홈 경기</div>
+          <div class="body-text">경기 시작 30분 전 알림, 응원방 자동 오픈, 선발 라인업 확인 옵션을 추가할 수 있습니다.</div>
+        `)}
+      `;
+    }
+
+    function renderCheer() {
+      title.textContent = "팀 응원방";
+      subtitle.textContent = `${state.team} 팬들과 실시간으로 짧은 응원 메시지를 주고받는 화면입니다.`;
+      content.innerHTML = `
+        ${card(`
+          <div class="label">ONLINE CHEER</div>
+          <h2>${state.team} 응원방</h2>
+          <div class="body-text">현재 1,248명이 함께 응원 중 · 경기 중에는 상단 고정 노출</div>
+        `)}
+        ${section("응원 메시지")}
+        ${messageCard("수비 집중! 이번 이닝 막자", "수빈 · 21:14")}
+        ${messageCard("다음 타석 응원가 같이 갑시다", "도윤 · 21:15")}
+        ${messageCard("오늘 분위기 진짜 좋다", "서연 · 21:16")}
+        ${section("응원 이모션")}
+        ${card(`<div class="tag-row">
+          <span class="chip">짝짝짝</span><span class="chip">안타!</span><span class="chip">홈런!</span><span class="chip">수비!</span><span class="chip">가자!</span>
+        </div>`)}
+        <input class="field" value="오늘 경기 끝까지 응원합니다!">
+        <div class="row"><button class="btn red">응원 보내기</button></div>
+      `;
+    }
+
+    function renderUpload() {
+      title.textContent = "응원 업로드";
+      subtitle.textContent = "사진이나 짧은 영상을 올려 같은 팀 팬들과 현장감을 나눕니다.";
+      content.innerHTML = `
+        ${card(`
+          <div class="media">사진 / 짧은 영상 미리보기</div>
+          <div class="row">
+            <button class="btn green">사진 선택</button>
+            <button class="btn red">영상 선택</button>
+          </div>
+        `)}
+        ${section("게시글 정보")}
+        <textarea class="field" rows="4">${state.team} 오늘도 끝까지 가자!</textarea>
+        ${card(`<div class="tag-row">
+          <span class="chip active">${state.team}</span>
+          <span class="chip">직관</span>
+          <span class="chip">온라인응원</span>
+          <span class="chip">응원가</span>
+        </div>`)}
+        <div class="row"><button class="btn red">게시글 올리기</button></div>
+      `;
+    }
+
+    function renderSongs() {
+      title.textContent = "응원가 모음";
+      subtitle.textContent = "흩어진 팀 응원가와 선수 응원가를 한 화면에서 검색하고 저장합니다.";
+      content.innerHTML = `
+        <input class="field" value="${state.team}" aria-label="응원가 검색">
+        ${section("팀 응원가")}
+        ${songCard("승리를 향해", "팀 대표 응원가 · 가사 / 영상 링크")}
+        ${songCard("찬스 테마", "득점권 상황에서 부르는 응원가")}
+        ${section("선수 응원가")}
+        ${songCard("1번 타자 응원가", "선수별 가사, 등장곡, 즐겨찾기 옵션")}
+        ${songCard("마무리 투수 테마", "9회 등판 상황에 맞춘 응원가")}
+      `;
+    }
+
+    function renderProfile() {
+      title.textContent = "마이페이지";
+      subtitle.textContent = "선호 팀, 내가 올린 응원 콘텐츠, 즐겨찾기 응원가를 관리합니다.";
+      content.innerHTML = `
+        ${card(`
+          <div class="row" style="padding-top:0">
+            <div class="avatar">ON</div>
+            <div>
+              <div class="card-title">온라인 응원러</div>
+              <div class="body-text">선호 팀 · ${state.team}</div>
+            </div>
+          </div>
+        `)}
+        ${section("내 활동")}
+        ${card(`<div class="row" style="padding-top:0"><div class="card-title" style="flex:1">업로드한 응원 콘텐츠</div><strong style="color:var(--red)">12개</strong></div>`)}
+        ${card(`<div class="row" style="padding-top:0"><div class="card-title" style="flex:1">즐겨찾기 응원가</div><strong style="color:var(--red)">8곡</strong></div>`)}
+        ${card(`<div class="row" style="padding-top:0"><div class="card-title" style="flex:1">참여한 응원방</div><strong style="color:var(--red)">24회</strong></div>`)}
+        ${section("설정 옵션")}
+        <div class="row"><button class="btn blue">선호 팀 변경</button></div>
+        <div class="row"><button class="btn green">경기 시작 알림 설정</button></div>
+      `;
+    }
+
+    function updateNav() {
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.toggle("active", item.dataset.tab === state.tab);
+      });
+    }
+
+    function bindGoButtons() {
+      document.querySelectorAll("[data-go]").forEach(button => {
+        button.addEventListener("click", () => {
+          state.tab = button.dataset.go;
+          render();
+        });
+      });
+    }
+
+    function render() {
+      renderTeamChips();
+      updateNav();
+      if (state.tab === "cheer") renderCheer();
+      else if (state.tab === "upload") renderUpload();
+      else if (state.tab === "songs") renderSongs();
+      else if (state.tab === "profile") renderProfile();
+      else renderHome();
+      bindGoButtons();
+      content.scrollTo({ top: 0 });
+    }
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+      item.addEventListener("click", () => {
+        state.tab = item.dataset.tab;
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>

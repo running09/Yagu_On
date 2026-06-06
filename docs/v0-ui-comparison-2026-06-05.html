@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>v0 UI 비교 - 응원ON</title>
+  <style>
+    :root {
+      --peach: #fff7f5;
+      --peach-strong: #fff0ed;
+      --coral: #ef5350;
+      --navy: #082247;
+      --ink: #1f232b;
+      --muted: #6f7785;
+      --line: #eed9d4;
+      --white: #ffffff;
+      --shadow: 0 18px 42px rgba(22, 24, 29, 0.12);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #f7efec;
+      color: var(--ink);
+      font-family: "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+      line-height: 1.55;
+    }
+
+    header {
+      padding: 42px clamp(20px, 5vw, 72px) 28px;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(239, 83, 80, 0.16), transparent 32%),
+        linear-gradient(135deg, #fffaf8 0%, #fff0ed 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(32px, 5vw, 56px);
+      letter-spacing: 0;
+    }
+
+    header p {
+      max-width: 920px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    main {
+      width: min(1480px, calc(100% - 36px));
+      margin: 28px auto 80px;
+    }
+
+    .notice {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .notice-card {
+      min-height: 132px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    .notice-card strong {
+      display: block;
+      color: var(--navy);
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .notice-card span {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    section {
+      margin-top: 34px;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(24px, 3vw, 34px);
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      max-width: 760px;
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: var(--coral);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+      align-items: start;
+    }
+
+    .compare-grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .panel {
+      min-width: 0;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 42px;
+      margin-bottom: 12px;
+      color: var(--navy);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .panel-title small {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .shot {
+      display: block;
+      width: min(100%, 390px);
+      margin-inline: auto;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--peach);
+      box-shadow: 0 16px 36px rgba(8, 34, 71, 0.12);
+    }
+
+    .phone {
+      width: min(100%, 390px);
+      min-height: 844px;
+      margin-inline: auto;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--peach);
+      box-shadow: 0 16px 36px rgba(8, 34, 71, 0.12);
+    }
+
+    .phone-inner {
+      padding: 42px 18px 96px;
+    }
+
+    .phone-brand {
+      text-align: center;
+      color: var(--navy);
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 22px;
+    }
+
+    .phone h3 {
+      margin: 0;
+      font-size: 29px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .phone .sub {
+      margin: 10px 0 26px;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      overflow: hidden;
+      margin-bottom: 34px;
+    }
+
+    .chip {
+      flex: 0 0 auto;
+      min-width: 104px;
+      padding: 13px 17px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .chip.active {
+      min-width: 150px;
+      border-color: var(--coral);
+      background: var(--coral);
+      color: white;
+    }
+
+    .mock-card {
+      margin-bottom: 20px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 10px 20px rgba(8, 34, 71, 0.08);
+    }
+
+    .team-hero {
+      min-height: 246px;
+      text-align: center;
+      display: grid;
+      place-items: center;
+    }
+
+    .logo-box {
+      width: 88px;
+      height: 88px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 8px;
+      border-radius: 24px;
+      background: var(--navy);
+      color: white;
+      font-size: 38px;
+      font-weight: 900;
+    }
+
+    .team-name {
+      font-size: 29px;
+      font-weight: 900;
+    }
+
+    .rank {
+      margin-top: 10px;
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .record-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .record {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #687080;
+      color: white;
+      font-weight: 900;
+    }
+
+    .record.win { background: var(--coral); }
+
+    .game-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .game-row b {
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .cta {
+      width: 100%;
+      min-height: 58px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--coral);
+      color: white;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .group-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .group-item {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: white;
+    }
+
+    .group-item strong {
+      display: block;
+      color: var(--ink);
+      font-size: 19px;
+      margin-bottom: 4px;
+    }
+
+    .group-meta {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .input-mock {
+      height: 62px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      margin: 12px 0 14px;
+    }
+
+    .delta {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #fff8f6;
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .delta b {
+      color: var(--coral);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      background: white;
+    }
+
+    th, td {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--navy);
+      background: var(--peach-strong);
+      font-size: 15px;
+    }
+
+    td {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .ok { color: #18864b; font-weight: 900; }
+    .partial { color: #a56700; font-weight: 900; }
+    .blocked { color: #c33a36; font-weight: 900; }
+
+    .bottom-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 82px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      background: #ffecea;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .phone-wrap {
+      position: relative;
+    }
+
+    .nav-active {
+      color: var(--coral);
+    }
+
+    @media (max-width: 1120px) {
+      .notice,
+      .compare-grid,
+      .compare-grid.two {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .badge {
+        display: inline-block;
+        margin-top: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>v0 기준 UI 비교</h1>
+    <p>
+      왼쪽은 작업 전 캡처, 가운데는 v0에서 확인한 화면을 로컬 HTML로 재현한 기준, 오른쪽은 현재 APK를 실제 기기에서 캡처한 화면입니다.
+      외부 v0 링크가 로그인/네트워크 상태에 영향을 받아도 비교가 가능하도록 레퍼런스 화면은 이 파일 안에 직접 그렸습니다.
+    </p>
+  </header>
+
+  <main>
+    <div class="notice">
+      <div class="notice-card">
+        <strong>가장 크게 바뀐 것</strong>
+        <span>회색/네이비 중심 화면에서 v0의 피치 배경, 코랄 CTA, 둥근 카드 중심 화면으로 바뀌었습니다.</span>
+      </div>
+      <div class="notice-card">
+        <strong>홈 구성 변경</strong>
+        <span>기존 팬 피드 첫 화면 대신 팀 배지, 순위, 최근 전적, 직전 경기 요약을 먼저 보여줍니다.</span>
+      </div>
+      <div class="notice-card">
+        <strong>그룹 화면 변경</strong>
+        <span>큰 코랄 생성 버튼과 둥근 입력 폼으로 v0의 그룹 리스트/생성 화면 방향을 맞췄습니다.</span>
+      </div>
+      <div class="notice-card">
+        <strong>Firebase 설정 후</strong>
+        <span>Firestore/Storage 설정을 배포한 뒤 실제 그룹 카드와 생성 폼이 캡처에 보입니다.</span>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>홈 화면</h2>
+          <p>v0의 롯데 홈 기준입니다. 현재 앱도 롯데 칩을 선택해서 같은 문구와 전적이 보이는 상태로 다시 캡처했습니다.</p>
+        </div>
+        <span class="badge">핵심 비교</span>
+      </div>
+
+      <div class="compare-grid">
+        <div class="panel">
+          <div class="panel-title">작업 전 <small>outputs/device-ui-current.png</small></div>
+          <img class="shot" src="../outputs/device-ui-current.png" alt="작업 전 홈 화면">
+          <div class="delta"><b>전:</b> 회색 배경, Yagu_On 로고, TODAY 카드와 팬 피드 이미지가 먼저 노출됩니다.</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">v0 기준 <small>로컬 재현</small></div>
+          <div class="phone phone-wrap">
+            <div class="phone-inner">
+              <div class="phone-brand">응원ON</div>
+              <h3>오늘의 응원 홈</h3>
+              <p class="sub">롯데 자이언츠 팬들이 올린 응원 콘텐츠를 확인하세요.</p>
+              <div class="chips">
+                <div class="chip">삼성</div>
+                <div class="chip active">롯데 자이언츠</div>
+                <div class="chip">NC 다이노스</div>
+              </div>
+              <div class="mock-card team-hero">
+                <div>
+                  <div class="logo-box">롯</div>
+                  <div style="color: var(--muted); font-weight: 800;">[로고]</div>
+                  <div class="team-name">롯데 자이언츠</div>
+                  <div class="rank">6위 / 10개 구단</div>
+                </div>
+              </div>
+              <div class="mock-card">
+                <h3 style="font-size: 22px;">최근 전적</h3>
+                <div class="record-row">
+                  <div class="record">패</div>
+                  <div class="record">패</div>
+                  <div class="record win">승</div>
+                  <div class="record">패</div>
+                  <div class="record win">승</div>
+                </div>
+              </div>
+              <div class="mock-card">
+                <h3 style="font-size: 22px;">직전 경기</h3>
+                <div class="game-row"><span>상대</span><b>롯데 4:6 KIA</b></div>
+                <div class="game-row"><span>결과</span><b style="color: var(--coral);">패</b></div>
+                <div class="game-row"><span>선발</span><b>스트레일리</b></div>
+              </div>
+            </div>
+            <div class="bottom-nav">
+              <div class="nav-active">홈</div><div>응원방</div><div>그룹</div><div>응원가</div><div>마이</div>
+            </div>
+          </div>
+          <div class="delta"><b>기준:</b> 피치 배경, 코랄 선택 칩, 큰 팀 카드, 전적 원형 칩, 직전 경기 카드입니다.</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">현재 앱 <small>outputs/qa-v0-home-lotte.png</small></div>
+          <img class="shot" src="../outputs/qa-v0-home-lotte.png" alt="현재 롯데 홈 화면">
+          <div class="delta"><b>현재:</b> v0 기준의 색, 팀 카드, 순위, 최근 전적, 직전 경기 문구가 들어갔습니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>그룹 리스트 화면</h2>
+          <p>v0는 샘플 그룹 카드가 보입니다. 현재 앱도 Firebase 배포 후 실제 생성한 그룹 카드가 보이는 상태입니다.</p>
+        </div>
+        <span class="badge">반영됨</span>
+      </div>
+
+      <div class="compare-grid two">
+        <div class="panel">
+          <div class="panel-title">v0 기준 <small>로컬 재현</small></div>
+          <div class="phone phone-wrap">
+            <div class="phone-inner">
+              <div class="phone-brand">응원ON</div>
+              <h3>응원 그룹</h3>
+              <p class="sub">롯데 자이언츠 팬들과 함께 회차별 응원을 남깁니다.</p>
+              <div class="chips">
+                <div class="chip">LG</div>
+                <div class="chip active">롯데</div>
+                <div class="chip">키움</div>
+              </div>
+              <button class="cta">응원 그룹 만들기</button>
+              <div style="height: 20px;"></div>
+              <div class="group-list">
+                <div class="group-item">
+                  <strong>직관 응원방</strong>
+                  <div class="group-meta">8/10 · 공개 · 들어가기</div>
+                </div>
+                <div class="group-item">
+                  <strong>남산가이즈</strong>
+                  <div class="group-meta">4/10 · 비공개 · 들어가기</div>
+                </div>
+                <div class="group-item">
+                  <strong>온라인 응원단</strong>
+                  <div class="group-meta">15/20 · 공개 · 들어가기</div>
+                </div>
+              </div>
+            </div>
+            <div class="bottom-nav">
+              <div>홈</div><div>응원방</div><div class="nav-active">그룹</div><div>응원가</div><div>마이</div>
+            </div>
+          </div>
+          <div class="delta"><b>기준:</b> 그룹 카드 목록이 보이고, 만들기 버튼은 코랄색 큰 pill 버튼입니다.</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">현재 앱 <small>outputs/qa-group-create-after-firebase-settings-2.png</small></div>
+          <img class="shot" src="../outputs/qa-group-create-after-firebase-settings-2.png" alt="현재 그룹 화면">
+          <div class="delta"><b>현재:</b> Firebase 설정 배포 후 `QASettings` 그룹 카드와 상세 영역이 실제 데이터로 표시됩니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>그룹 생성 폼</h2>
+          <p>v0의 둥근 입력창과 코랄 생성 버튼을 현재 앱의 그룹 생성 폼에 반영했습니다.</p>
+        </div>
+        <span class="badge">반영됨</span>
+      </div>
+
+      <div class="compare-grid two">
+        <div class="panel">
+          <div class="panel-title">v0 기준 <small>로컬 재현</small></div>
+          <div class="phone phone-wrap">
+            <div class="phone-inner">
+              <div class="phone-brand">응원ON</div>
+              <h3>응원 그룹</h3>
+              <p class="sub">롯데 자이언츠 팬들과 함께 회차별 응원을 남깁니다.</p>
+              <div class="chips">
+                <div class="chip">LG</div>
+                <div class="chip active">롯데</div>
+                <div class="chip">키움</div>
+              </div>
+              <p class="sub" style="margin-top: 54px;">같이 응원할 그룹 이름을 정해주세요.</p>
+              <div class="input-mock"></div>
+              <button class="cta">만들기</button>
+              <div style="text-align: center; color: var(--muted); font-weight: 800; margin-top: 22px;">취소</div>
+            </div>
+            <div class="bottom-nav">
+              <div>홈</div><div>응원방</div><div class="nav-active">그룹</div><div>응원가</div><div>마이</div>
+            </div>
+          </div>
+          <div class="delta"><b>기준:</b> 단순 폼, 큰 라운드 입력, CTA 하나, 취소 텍스트입니다.</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">현재 앱 <small>outputs/qa-v0-groups-form-firebase-ok.png</small></div>
+          <img class="shot" src="../outputs/qa-v0-groups-form-firebase-ok.png" alt="현재 그룹 생성 폼">
+          <div class="delta"><b>현재:</b> 입력창/버튼/취소 위치는 v0 기준에 가깝게 반영됐고, 아래에는 실제 생성된 그룹 카드가 보입니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>적용 상태표</h2>
+          <p>눈으로 보기 어려운 변경과 아직 남은 차이를 분리했습니다.</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>상태</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>피치/코랄/네이비 컬러</td>
+            <td class="ok">반영</td>
+            <td>앱 배경, 선택 칩, 버튼, 카드 테두리, 하단 탭 색을 v0 톤으로 조정했습니다.</td>
+          </tr>
+          <tr>
+            <td>홈 첫 화면 구조</td>
+            <td class="ok">반영</td>
+            <td>기존 팬 피드 중심에서 팀 배지, 순위, 최근 전적, 직전 경기 요약 중심으로 바꿨습니다.</td>
+          </tr>
+          <tr>
+            <td>그룹 생성 진입</td>
+            <td class="ok">반영</td>
+            <td>큰 코랄 버튼 뒤에 생성 폼이 열리고, 폼은 둥근 입력창과 만들기 버튼으로 표시됩니다.</td>
+          </tr>
+          <tr>
+            <td>사용자용 오류 문구</td>
+            <td class="ok">반영</td>
+            <td>실제 캡처 XML에서 Firebase, Firestore, UID, owner/admin 같은 개발자용 단어가 잡히지 않습니다.</td>
+          </tr>
+          <tr>
+            <td>v0 샘플 그룹 카드</td>
+            <td class="ok">실데이터 확인</td>
+            <td>Firebase 설정 배포 후 실제 기기에서 `QASettings` 그룹 카드가 생성되고 목록에 표시됩니다.</td>
+          </tr>
+          <tr>
+            <td>완전 동일한 v0 프로토타입</td>
+            <td class="partial">부분 반영</td>
+            <td>Android Material 하단 탭 아이콘, 소셜 로그인 버튼 등은 v0와 아직 다릅니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

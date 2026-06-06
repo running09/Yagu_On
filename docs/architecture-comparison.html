@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yagu_On 아키텍처 비교</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5f6b7a;
+      --line: #d9e0e8;
+      --panel: #ffffff;
+      --bg: #f4f7fb;
+      --blue: #1f67d2;
+      --red: #c9392f;
+      --green: #16835c;
+      --gold: #a66a00;
+      --slate: #2d3b4f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Malgun Gothic", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.58;
+    }
+
+    header {
+      background: var(--slate);
+      color: #fff;
+      padding: 34px 28px 26px;
+      border-bottom: 5px solid var(--blue);
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+
+    header p {
+      margin: 0;
+      max-width: 980px;
+      color: #dce6f3;
+      font-size: 15px;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 26px;
+    }
+
+    section {
+      margin: 22px 0;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .verdict {
+      background: #fff;
+      border-left: 6px solid var(--red);
+      padding: 18px 20px;
+      box-shadow: 0 1px 3px rgba(20, 35, 55, 0.08);
+    }
+
+    .verdict strong {
+      color: var(--red);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 1px 3px rgba(20, 35, 55, 0.06);
+    }
+
+    .tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #e9f0fb;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bad {
+      background: #fae8e6;
+      color: var(--red);
+    }
+
+    .good {
+      background: #e4f4ed;
+      color: var(--green);
+    }
+
+    .warn {
+      background: #fff1d6;
+      color: var(--gold);
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 19px;
+    }
+
+    li {
+      margin: 7px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(20, 35, 55, 0.06);
+    }
+
+    th, td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #edf3fb;
+      color: #20314a;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code, pre {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      padding: 14px;
+      overflow-x: auto;
+      background: #17202a;
+      color: #eaf1f9;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .flow {
+      display: grid;
+      gap: 10px;
+    }
+
+    .node {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .arrow {
+      text-align: center;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .score {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 8px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .bar {
+      height: 10px;
+      background: #e1e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: var(--blue);
+    }
+
+    .priority {
+      counter-reset: item;
+      list-style: none;
+      padding: 0;
+    }
+
+    .priority li {
+      counter-increment: item;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 14px 12px 48px;
+      position: relative;
+    }
+
+    .priority li::before {
+      content: counter(item);
+      position: absolute;
+      left: 14px;
+      top: 12px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      text-align: center;
+      line-height: 24px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 10px 26px 34px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 820px) {
+      .grid,
+      .three {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        padding: 18px;
+      }
+
+      header {
+        padding: 28px 18px 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Yagu_On 아키텍처 비교</h1>
+    <p>현재 Android Java/XML + Firebase MVP 구조를 기준으로, 그룹/회차/권한/미디어 업로드 요구를 얹었을 때의 위험과 권장 방향을 비교한다.</p>
+  </header>
+
+  <main>
+    <section class="verdict">
+      <h2>결론부터</h2>
+      <p><strong>현재 구조는 빠른 시연용 MVP로는 괜찮지만, 그룹/회차/권한 기능을 그대로 얹기에는 부족하다.</strong> 특히 기존 <code>posts</code> 중심 데이터 구조는 “한 그룹 안에서 owner/admin이 회차를 열고, 구성원별 사진/영상/글귀를 기록한다”는 요구와 맞지 않는다. 화면을 더 만들기 전에 권한 정책과 회차 기록 데이터 구조를 먼저 분리해야 한다.</p>
+      <p><strong>2026-05-30 구현 반영:</strong> <code>GroupPermissionPolicy</code>, <code>VideoUploadPolicy</code>, 그룹/회차 모델, Repository 계약, Firebase 구현체 기반, <code>RepositoryProvider</code>를 추가했다. 기존 화면 전체를 패키지 이동하지는 않았고, 새 기능이 붙을 안정적인 기반부터 분리했다.</p>
+    </section>
+
+    <section>
+      <h2>현재 구조 요약</h2>
+      <div class="grid three">
+        <div class="card">
+          <span class="tag">UI</span>
+          <h3>Activity / Fragment</h3>
+          <ul>
+            <li><code>AuthGateActivity</code>, <code>LoginActivity</code>, <code>SignupActivity</code>, <code>TeamSelectActivity</code></li>
+            <li><code>MainActivity</code>가 하단 탭과 팀 선택 칩을 관리</li>
+            <li><code>HomeFragment</code>, <code>CheerFragment</code>, <code>GroupsFragment</code>, <code>SongsFragment</code>, <code>ProfileFragment</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag">Data</span>
+          <h3>Repository + Firebase</h3>
+          <ul>
+            <li><code>AuthRepository</code>, <code>UserRepository</code>, <code>PostRepository</code> 등 인터페이스 존재</li>
+            <li><code>FirebaseAuthRepository</code>, <code>FirebasePostRepository</code> 등 Firebase 구현체 존재</li>
+            <li>Firestore, Firebase Auth, Firebase Storage 직접 사용</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag">Model / Util</span>
+          <h3>모델과 유틸</h3>
+          <ul>
+            <li><code>UserProfile</code>, <code>Post</code>, <code>Team</code>, <code>CheerMessage</code></li>
+            <li><code>TeamCatalog</code>는 앱 내부 고정 팀 목록</li>
+            <li><code>Ui</code> 유틸은 코드 기반 View 생성을 담당</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>현재 구조의 장단점</h2>
+      <div class="grid">
+        <div class="card">
+          <span class="tag good">장점</span>
+          <ul>
+            <li>파일 수가 적고 구조가 단순해서 처음 이해하기 쉽다.</li>
+            <li>Repository 인터페이스를 둔 점은 좋은 출발이다.</li>
+            <li>Firebase Auth, Firestore, Storage까지 MVP 기능 연결이 이미 되어 있다.</li>
+            <li>Java/XML 과제 프로젝트로 설명하기 쉽다.</li>
+            <li>팀 선택, 로그인, 업로드, 응원방 같은 큰 화면 뼈대가 이미 있다.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag bad">단점</span>
+          <ul>
+            <li>Activity/Fragment가 Repository 구현체를 직접 생성한다. 테스트와 교체가 어렵다.</li>
+            <li>화면 코드가 UI 구성, 입력 검증, Firebase 요청, 이동 처리를 동시에 한다.</li>
+            <li>권한 판단을 둘 곳이 없다. owner/admin/member 조건문이 화면마다 퍼질 가능성이 크다.</li>
+            <li><code>posts</code> 컬렉션은 팀 피드에는 맞지만 그룹/회차/구성원 기록에는 안 맞는다.</li>
+            <li><code>LinearLayout</code>에 View를 계속 추가하는 방식은 구성원 리스트와 기록 리스트가 커지면 금방 한계가 온다.</li>
+            <li>웹 크롤링 데이터가 들어올 계층이 없다. 앱 화면에서 바로 긁기 시작하면 유지보수가 나빠진다.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>현재 방식 vs 제안 방식</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>현재 방식</th>
+            <th>제안 방식</th>
+            <th>판단</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>패키지 구조</td>
+            <td>루트 패키지에 Activity/Fragment가 몰려 있음</td>
+            <td><code>ui</code>, <code>domain</code>, <code>data</code>, <code>model</code>로 분리</td>
+            <td>지금은 괜찮지만 기능 추가 시 금방 지저분해진다.</td>
+          </tr>
+          <tr>
+            <td>권한 처리</td>
+            <td>아직 명확한 권한 정책 코드 없음</td>
+            <td><code>GroupPermissionPolicy</code>에서 owner/admin/member 판단</td>
+            <td>반드시 분리해야 한다. 안 그러면 버그가 화면마다 생긴다.</td>
+          </tr>
+          <tr>
+            <td>게시글 구조</td>
+            <td><code>posts</code> 컬렉션에 팀별 게시글 저장</td>
+            <td><code>groups/{groupId}/innings/{inningId}/records/{userId}</code></td>
+            <td>새 요구에는 제안 구조가 맞다.</td>
+          </tr>
+          <tr>
+            <td>목록 화면</td>
+            <td><code>LinearLayout</code>에 카드 추가</td>
+            <td>RecyclerView Adapter 사용</td>
+            <td>회차 상세와 구성원별 기록은 RecyclerView가 맞다.</td>
+          </tr>
+          <tr>
+            <td>영상 제한</td>
+            <td>아직 명확한 정책 코드 없음</td>
+            <td><code>VideoUploadPolicy</code>에서 5초 제한 검사</td>
+            <td>클라이언트 우선 제한 결정을 코드에서도 한 곳에 모아야 한다.</td>
+          </tr>
+          <tr>
+            <td>웹 크롤링 데이터</td>
+            <td>아직 계층 없음</td>
+            <td><code>GameDataRepository</code> + Firestore 캐시</td>
+            <td>앱에서 직접 크롤링은 최후의 수단이다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>권장 아키텍처</h2>
+      <div class="grid">
+        <div class="card">
+          <span class="tag good">제안 구조</span>
+          <pre>com.example.myapplication
+├─ ui
+│  ├─ auth
+│  ├─ team
+│  ├─ main
+│  ├─ group
+│  └─ inning
+├─ domain
+│  ├─ GroupPermissionPolicy
+│  ├─ VideoUploadPolicy
+│  └─ usecase
+├─ data
+│  ├─ repository
+│  ├─ firebase
+│  └─ crawler
+└─ model</pre>
+        </div>
+        <div class="card">
+          <span class="tag">데이터 흐름</span>
+          <div class="flow">
+            <div class="node">Fragment: 화면 표시와 사용자 입력만 담당</div>
+            <div class="arrow">↓</div>
+            <div class="node">UseCase / Policy: 권한, 5초 제한, 삭제 기준 판단</div>
+            <div class="arrow">↓</div>
+            <div class="node">Repository: 기능별 데이터 요청</div>
+            <div class="arrow">↓</div>
+            <div class="node">Firebase / 크롤링 캐시: 실제 저장소</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>그룹/회차 기능 데이터 방향</h2>
+      <div class="card">
+        <pre>groups/{groupId}
+- ownerId
+- adminIds
+- name
+- teamId
+
+groups/{groupId}/members/{userId}
+- role: "owner" | "admin" | "member"
+
+groups/{groupId}/innings/{inningId}
+- inningNumber
+- createdBy
+- createdAt
+
+groups/{groupId}/innings/{inningId}/records/{userId}
+- authorId
+- mediaType: "image" | "video"
+- mediaUrl
+- text
+- createdAt
+- updatedAt</pre>
+        <p>이 구조는 “회차 추가 이후 구성원 내역 리스트를 보고, 구성원별 짧은 영상/사진/글귀를 올린다”는 화면 요구에 맞다. 기존 <code>posts</code>는 팀 전체 피드용으로 남기고, 그룹 회차 기록은 새 구조로 분리하는 편이 낫다.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>아키텍처 점수</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>현재 구조</h3>
+          <div class="score"><span>빠른 구현</span><div class="bar"><span style="width: 85%"></span></div></div>
+          <div class="score"><span>확장성</span><div class="bar"><span style="width: 42%"></span></div></div>
+          <div class="score"><span>테스트 용이성</span><div class="bar"><span style="width: 35%"></span></div></div>
+          <div class="score"><span>권한 안정성</span><div class="bar"><span style="width: 30%"></span></div></div>
+        </div>
+        <div class="card">
+          <h3>제안 구조</h3>
+          <div class="score"><span>빠른 구현</span><div class="bar"><span style="width: 68%"></span></div></div>
+          <div class="score"><span>확장성</span><div class="bar"><span style="width: 82%"></span></div></div>
+          <div class="score"><span>테스트 용이성</span><div class="bar"><span style="width: 75%"></span></div></div>
+          <div class="score"><span>권한 안정성</span><div class="bar"><span style="width: 84%"></span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>우선순위</h2>
+      <ol class="priority">
+        <li><strong>그룹/회차/기록 모델부터 만든다.</strong> 기존 <code>posts</code>를 억지로 확장하지 않는다.</li>
+        <li><strong><code>GroupPermissionPolicy</code>를 만든다.</strong> owner/admin/member 판단을 화면에 흩뿌리지 않는다.</li>
+        <li><strong>회차 상세 화면은 RecyclerView로 간다.</strong> 구성원 수만큼 반복되는 화면은 RecyclerView가 맞다.</li>
+        <li><strong><code>VideoUploadPolicy</code>로 5초 제한을 한 곳에 둔다.</strong> 빠른 구현은 클라이언트에서 하되 나중에 서버 검증으로 확장 가능하게 한다.</li>
+        <li><strong>웹 크롤링 결과는 Firestore 캐시를 거쳐 앱에서 읽는다.</strong> 앱 화면에서 직접 크롤링하는 구조는 오래 못 간다.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>솔직한 리스크</h2>
+      <div class="grid three">
+        <div class="card">
+          <span class="tag bad">리스크 1</span>
+          <h3>현재 구조로 계속 붙이면 중복이 늘어난다</h3>
+          <p>권한 확인, 로딩 처리, 오류 메시지, Firebase 경로가 화면마다 복사될 가능성이 높다.</p>
+        </div>
+        <div class="card">
+          <span class="tag bad">리스크 2</span>
+          <h3>데이터 구조를 늦게 바꾸면 더 아프다</h3>
+          <p>팀 피드용 <code>posts</code>로 그룹 회차 기록을 구현하면 나중에 화면 요구와 충돌한다.</p>
+        </div>
+        <div class="card">
+          <span class="tag warn">리스크 3</span>
+          <h3>크롤링은 앱 핵심 로직이 되면 안 된다</h3>
+          <p>크롤링 대상 사이트 구조가 바뀌면 앱 기능이 깨진다. 캐시 계층이 필요하다.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    기준: 2026-05-30, 현재 코드와 프로젝트 Markdown 문서 분석 결과.
+  </footer>
+</body>
+</html>
