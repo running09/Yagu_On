@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function groupDoc(groupId) {
+      return firestore.get(/databases/(default)/documents/groups/$(groupId)).data;
+    }
+
+    function isGroupMember(groupId) {
+      return signedIn()
+        && firestore.exists(/databases/(default)/documents/groups/$(groupId))
+        && request.auth.uid in groupDoc(groupId).memberIds;
+    }
+
+    function isSupportedUpload() {
+      return request.resource != null
+        && request.resource.contentType != null
+        && (
+          request.resource.contentType.matches('image/.*')
+          || request.resource.contentType.matches('video/.*')
+        );
+    }
+
+    match /groups/{groupId}/innings/{inningId}/records/{userId}/{fileName} {
+      allow read: if isGroupMember(groupId);
+      allow create, update: if isGroupMember(groupId) && isSelf(userId) && isSupportedUpload();
+      allow delete: if isGroupMember(groupId) && isSelf(userId);
+    }
+
+    match /posts/{userId}/{fileName} {
+      allow read: if signedIn();
+      allow create, update: if isSelf(userId) && isSupportedUpload();
+      allow delete: if isSelf(userId);
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,154 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function groupExists(groupId) {
+      return exists(/databases/$(database)/documents/groups/$(groupId));
+    }
+
+    function groupData(groupId) {
+      return get(/databases/$(database)/documents/groups/$(groupId)).data;
+    }
+
+    function groupDataAfter(groupId) {
+      return getAfter(/databases/$(database)/documents/groups/$(groupId)).data;
+    }
+
+    function isGroupMember(groupId) {
+      return signedIn()
+        && groupExists(groupId)
+        && request.auth.uid in groupData(groupId).memberIds;
+    }
+
+    function isGroupOwner(groupId) {
+      return signedIn()
+        && groupExists(groupId)
+        && groupData(groupId).ownerId == request.auth.uid;
+    }
+
+    function isGroupAdmin(groupId) {
+      return signedIn()
+        && groupExists(groupId)
+        && request.auth.uid in groupData(groupId).adminIds;
+    }
+
+    function isGroupManager(groupId) {
+      return isGroupOwner(groupId) || isGroupAdmin(groupId);
+    }
+
+    function onlyChanged(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    function validGroupCreate() {
+      return signedIn()
+        && request.resource.data.keys().hasOnly([
+          'ownerId',
+          'adminIds',
+          'memberIds',
+          'name',
+          'teamId',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.adminIds is list
+        && request.resource.data.adminIds.size() == 0
+        && request.resource.data.memberIds is list
+        && request.resource.data.memberIds.size() == 1
+        && request.auth.uid in request.resource.data.memberIds
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 20
+        && request.resource.data.teamId is string;
+    }
+
+    function validOwnerMemberCreate(groupId, userId) {
+      return signedIn()
+        && userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.role == 'owner'
+        && groupDataAfter(groupId).ownerId == request.auth.uid
+        && request.auth.uid in groupDataAfter(groupId).memberIds;
+    }
+
+    function validInvitedMemberCreate(userId) {
+      return request.resource.data.userId == userId
+        && request.resource.data.role == 'member';
+    }
+
+    match /users/{userId} {
+      allow create, read, update: if isSelf(userId);
+      allow delete: if false;
+    }
+
+    match /posts/{postId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.authorUid == request.auth.uid;
+      allow update, delete: if signedIn()
+        && resource.data.authorUid == request.auth.uid;
+    }
+
+    match /cheerSongs/{songId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /cheerRooms/{teamId}/messages/{messageId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.senderUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /groups/{groupId} {
+      allow create: if validGroupCreate();
+      allow get, list: if signedIn()
+        && request.auth.uid in resource.data.memberIds;
+      allow update: if isGroupOwner(groupId)
+        || (isGroupAdmin(groupId) && onlyChanged(['memberIds', 'updatedAt']));
+      allow delete: if isGroupOwner(groupId);
+
+      match /members/{userId} {
+        allow read: if isGroupMember(groupId);
+        allow create: if validOwnerMemberCreate(groupId, userId)
+          || (isGroupManager(groupId) && validInvitedMemberCreate(userId));
+        allow update: if isGroupOwner(groupId)
+          && request.resource.data.userId == userId
+          && request.resource.data.role in ['admin', 'member'];
+        allow delete: if isGroupManager(groupId)
+          && userId != groupData(groupId).ownerId;
+      }
+
+      match /innings/{inningId} {
+        allow read: if isGroupMember(groupId);
+        allow create, update: if isGroupManager(groupId)
+          && request.resource.data.createdBy == request.auth.uid
+          && request.resource.data.inningNumber is int
+          && request.resource.data.inningNumber > 0;
+        allow delete: if isGroupManager(groupId);
+
+        match /records/{userId} {
+          allow read: if isGroupMember(groupId);
+          allow create, update: if isGroupMember(groupId)
+            && isSelf(userId)
+            && request.resource.data.authorId == request.auth.uid;
+          allow delete: if isGroupManager(groupId) || isSelf(userId);
+        }
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
